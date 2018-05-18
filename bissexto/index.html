@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Bissexto</title>
+    <script>
+
+
+function verificaAnoBissexto() {
+    let anoForm = document.getElementById("teste").value;
+    let select = document.getElementById("dias");
+    let options = getDiasMes(02, anoForm);
+    for (let i = 0; i < options.length; i++) {
+        let opt = options[i];
+        let el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        select.appendChild(el);
+    }
+   
+}
+
+function getDiasMes(month, year) {
+     month--;
+
+     let date = new Date(year, month, 1);
+     let days = [];
+     while (date.getMonth() === month) {
+        days.push(date.getDate());
+        date.setDate(date.getDate() + 1);
+     }
+     if(days.length > 28){
+     alert("Ano "+ year +" É ou foi ou vai ser Bissexto");}
+     /*document.getElementById("resposta").innerHTML ="O Ano "+year+" É ou Foi ou Vai Ser Bissexto";
+     }*/
+     else{
+        alert("Ano "+ year +" Não é ou foi ou vai ser Bissexto");
+       /* document.getElementById("resposta").innerHTML ="O Ano "+year+" Não é ou Não Foi ou Não Vai Ser Bissexto";*/
+     }
+    /* document.getElementById("demo").innerHTML = days.length;*/
+    /* return days;*/
+    document.getElementById("demo").innerHTML = Boolean(days.length > 28);
+
+  
+}
+
+
+    
+    </script>
+</head>
+<body>
+    <h1>Testador de Ano Bissexto</h1>
+
+    <!--<form  method="GET" action="#" onSubmit="return verificaAnoBissexto()";>-->
+        <form  method="GET" action="#" Submit="#";>
+        <label>Informe o Ano</label>
+        <input type="number" name="ano" id="teste" maxlength="4" placeholder="2018" required>
+        <button type="button"  onclick="return verificaAnoBissexto()">Enviar</button>
+
+    </form>
+    <br>
+    <br>
+    <p id="demo"></p>
+      <!--<strong id="resposta"></strong>-->
+      
+
+        <!--<h2 id="resposta"></h2>
+
+        <p id="demo"></p>
+
+        Dia: <select id="dias"></select>-->
+
+    
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Isograma</title>
+</head>
+<body>
+    <form action="#" method="GET">
+
+    <label>Digite sua Frase:</label>
+     <input type="text" name="texto" id="texto" placeholder="somente minusculas" required>
+
+     <button type="button" onclick="checarIsograma()">Check</button>
+    </form>
+
+    <p id="demo"></p>
+
+    <script>
+     function checarIsograma(){
+     let recebeTexto = document.getElementById("texto").value;
+     let converteMatriz = Array.from(recebeTexto);
+   
+   
+    console.log(converteMatriz);
+
+     document.getElementById("demo").innerHTML = recebeTexto;
+
+     let arr = Array.from(recebeTexto);
+		function isUnique(val) {
+			let count = 0;
+			for (let i in arr) {
+				if (val == arr[i]) {
+					count++;
+					if (count > 1) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		let uniqueElements = arr.filter(isUnique, arr);
+		//document.write(uniqueElements);
+        //document.write(uniqueElements.length);
+        //document.write(arr.length)
+
+        if(uniqueElements.length == arr.length){
+           alert("Isograma");
+          //  console.log("Isograma");
+        }else{
+		alert("Não é isograma");
+           // console.log("Não é isograma");
+        }
+    document.getElementById("demo").innerHTML = Boolean(uniqueElements.length == arr.length);
+     }
+
+
+
+
+    </script>
+    
+</body>
+</html>

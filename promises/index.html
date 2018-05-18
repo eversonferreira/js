@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Promises</title>
+    <script>
+
+    function checkCombustivel(){
+
+ 
+    let promise = new Promise(function(resolve, reject) {
+    let valorEtanol = document.getElementById("valorEtanol").value;
+    let valorGasolina = document.getElementById("valorGasolina").value;
+    
+  resolve(valorEtanol/valorGasolina);
+});
+
+promise.then(function(val) {
+  console.log(val); // 1
+  return val ;
+}).then(function(val) {
+    if (val > 0.7 ){
+        document.getElementById("resultado").innerHTML = "Gasolina é melhor pra você";
+    }else{
+        document.getElementById("resultado").innerHTML = "Etanol é melhor pra você";
+    }
+ 
+})
+
+
+}
+    </script>
+
+    
+</head>
+<body>
+    <h1>Calculadora de Melhor Combustível</h1>
+    <form action="#" method="GET">
+           <label>Informe o Valor do Etanol</label>
+           <input type="number" id="valorEtanol"  placeholder="R$ 0,00" required><label>Reais</label>
+            <br>
+            <br>
+            <br>
+           <label>Informe o Valor da Gasolina</label>
+           <input type="number" id="valorGasolina"  placeholder="R$ 0,00"  required><label>Reais</label>
+           <br>
+           <br>
+           <button type="button" onclick="checkCombustivel()">Calcular</button>
+
+    </form>
+
+    <h2 id="resultado"></h2>
+    
+</body>
+</html>
