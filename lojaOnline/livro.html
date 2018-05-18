@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cadastro de Livro</title>
+    <script>
+
+
+        // Criando/abrindo o banco
+        var db = openDatabase("LojaOnline", "1.0", "base de dados da aplicacao", 200000);
+
+        // criando a tabela caso ela não exista
+        db.transaction(function (transaction) {
+            transaction.executeSql('CREATE TABLE IF NOT EXISTS livro ("id" INTEGER PRIMARY KEY , "nome" TEXT, "ano" INTEGER, "autor" TEXT, "valor" INTEGER, "quantidade" INTEGER, "tipo" TEXT)', [], null, db.onError);
+            transaction.executeSql('CREATE TABLE IF NOT EXISTS vendalivro ("id" INTEGER ,"nome" TEXT, "email" TEXT, "data" TEXT, "quantidade" INTEGER, "valor" INTEGER, "valortotal" INTEGER)', [], null, db.onError);
+        })
+
+        // função callback de erro
+        db.onError = function (transaction, e) {
+            alert("Aconteceu um erro: " + e.message);
+            // console.log(e.message);
+        }
+
+        // função de callback de sucesso de insert
+        db.onSuccess = function (transaction, e) {
+            alert("Dados Gravados com Sucesso!");
+            location.reload();
+            //console.log(e);
+        }
+
+
+        class Livro {
+            constructor(id, nome, ano, autor, valor, quantidade, tipo) {
+                this.id = id;
+                this.nome = nome;
+                this.ano = ano;
+                this.autor = autor;
+                this.valor = valor;
+                this.quantidade = quantidade
+                this.tipo = tipo
+            }
+            salvar() {
+                let useId = this.id;
+                let insertNome = this.nome;
+                let insertAno = this.ano;
+                let insertAutor = this.autor;
+                let insertValor = this.valor;
+                let insertQuantidade = this.quantidade
+                let insertTipo = this.tipo
+
+                db.transaction(function (transaction) {
+                    if (useId) {
+                        transaction.executeSql('UPDATE livro' + ' SET nome = ?, ano=? , autor=?, valor=?, quantidade = ?, tipo = ?' + ' WHERE id = ?', [insertNome , insertAno, insertAutor, insertValor, insertQuantidade,insertTipo, useId], db.onSuccess, db.onError);
+
+                    } else {
+                        transaction.executeSql("INSERT INTO livro(nome, ano, autor, valor, quantidade, tipo) VALUES(?, ?, ?, ?, ?,?)", [insertNome , insertAno, insertAutor, insertValor, insertQuantidade, insertTipo], db.onSuccess, db.onError);
+                    }
+                })
+            }
+         
+
+        }
+        class Impresso extends Livro{
+
+               
+            }
+
+            class Online extends Livro{
+               
+            }
+
+
+
+
+
+
+
+        function Salvar() {
+            var teste = new Livro(document.getElementById('id').value,
+                document.getElementById('nome').value,
+                document.getElementById('ano').value,
+                document.getElementById('autor').value,
+                document.getElementById('valor').value,
+                document.getElementById('quantidade').value,
+                document.getElementById('tipo').value,);
+                
+
+            teste.salvar();
+
+        }
+
+
+
+        window.onload = mostrar;
+        function mostrar() {
+            var table = document.getElementById('tbody-registros');
+
+            db.transaction(function (transaction) {
+                transaction.executeSql('SELECT * FROM livro', [], function (transaction, resultado) {
+                    var rows = resultado.rows;
+                    var tr = '';
+                    for (var i = 0; i < rows.length; i++) {
+                        tr += '<tr>';
+                        tr += '<td onClick="atualizar(' + rows[i].id + ')">' + rows[i].id + '</td>';
+                        tr += '<td>' + rows[i].nome + '</td>';
+                        tr += '<td>' + rows[i].ano + '</td>';
+                        tr += '<td>' + rows[i].autor + '</td>';
+                        tr += '<td>'+'R$'+ rows[i].valor + '</td>';
+                        tr += '<td>' + rows[i].quantidade + '</td>';
+                        tr += '<td>' + rows[i].tipo + '</td>';
+                        tr += '<td onClick="atualizar(' + rows[i].id + ')">' + 'editar' + '</td>';
+                        tr += '<td onClick="deletar(' + rows[i].id + ')">' + 'excluir' + '</td>';
+                        tr += '</tr>';
+                    }
+                    table.innerHTML = tr;
+
+                }, null);
+            });
+        }
+
+        function atualizar(_id) {
+
+            let id = document.getElementById('id');
+            let nome = document.getElementById('nome');
+            let ano = document.getElementById('ano');
+            let autor = document.getElementById('autor');
+            let valor = document.getElementById('valor');
+            let quantidade = document.getElementById('quantidade');
+            let tipo = document.getElementById('tipo');
+
+
+            id.value = _id;
+
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM livro WHERE id=?', [_id], function (tx, resultado) {
+                    var rows = resultado.rows[0];
+                    id.value = rows.id;
+                    nome.value = rows.nome;
+                    ano.value = rows.ano;
+                    autor.value = rows.autor;
+                    valor.value = rows.valor;
+                    quantidade.value = rows.quantidade;
+                    tipo.value = rows.tipo;
+                });
+            });
+
+
+
+        }
+
+
+        function deletar(_id) {
+
+
+            id.value = _id;
+
+            db.transaction(function (transaction) {
+                transaction.executeSql('DELETE FROM livro WHERE id=?', [_id]);
+            })
+
+            location.reload();
+
+
+        }
+
+
+
+
+    </script>
+</head>
+
+<body>
+<input type="button" value="Voltar" onClick="history.go(-1)">
+    <h1>Cadastro de Livro</h1>
+
+    <form action="#" method="GET" onsubmit="Salvar()">
+        <input type="hidden" id="id" name="id">
+
+        <label>NOME:</label>
+        <input type="text" id="nome"  required>
+
+        <br>
+        <br>
+        <label>ANO:</label>
+        <input type="number" id="ano"  required>
+        <br>
+        <br>
+        <label>AUTOR:</label>
+        <input type="text" id="autor"  required>
+        <br>
+        <br>
+        <label>VALOR:</label>
+        <input type="number" id="valor"  required>
+        <br>
+        <br>
+        <label>QUANTIDADE:</label>
+        <input type="number" id="quantidade"  required>
+        <br>
+        <br>
+        <label>TIPO:</label>
+        <select id="tipo">
+            <option value="livro">livro</option>
+            <option value="ebook">e-book</option>
+        </select>
+        <br>
+        <br>
+        <button type="submit">Salvar</button>
+
+    </form>
+
+    <hr>
+
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>NOME</th>
+            <th>ANO</th>
+            <th>AUTOR</th>
+            <th>VALOR</th>
+            <th>QUANTIDADE</th>
+            <th>TIPO</th>
+            <th>AÇÕES</th>
+
+        </thead>
+        <tbody id="tbody-registros">
+
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

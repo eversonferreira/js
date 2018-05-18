@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cadastro de Loja</title>
+    <script>
+
+
+        // Criando/abrindo o banco
+        var db = openDatabase("LojaOnline", "1.0", "base de dados da aplicacao", 200000);
+
+        // criando a tabela caso ela não exista
+        db.transaction(function (transaction) {
+            transaction.executeSql('CREATE TABLE IF NOT EXISTS loja ("id" INTEGER PRIMARY KEY , "cnpj" INTEGER, "razao" TEXT, "fantasia" TEXT, "telefone" INTEGER, "site" TEXT)', [], null, db.onError);
+        })
+
+        // função callback de erro
+        db.onError = function (transaction, e) {
+            alert("Aconteceu um erro: " + e.message);
+            // console.log(e.message);
+        }
+
+        // função de callback de sucesso de insert
+        db.onSuccess = function (transaction, e) {
+            alert("Dados Gravados com Sucesso!");
+            location.reload();
+            //console.log(e);
+        }
+
+
+        class Loja {
+            constructor(id, cnpj, razao, fantasia, telefone, site) {
+                this.id = id;
+                this.cnpj = cnpj;
+                this.razao = razao;
+                this.fantasia = fantasia;
+                this.telefone = telefone;
+                this.site = site
+            }
+            salvar() {
+                let useId = this.id;
+                let insertCnpj = this.cnpj;
+                let insertRazao = this.razao;
+                let insertFantasia = this.fantasia;
+                let insertTelefone = this.telefone;
+                let insertSite = this.site
+
+                db.transaction(function (transaction) {
+                    if (useId) {
+                        transaction.executeSql('UPDATE loja' + ' SET cnpj = ?, razao=? , fantasia=?, telefone=?, site = ?' + ' WHERE id = ?', [insertCnpj, insertRazao, insertFantasia, insertTelefone, insertSite, useId], db.onSuccess, db.onError);
+
+                    } else {
+                        transaction.executeSql("INSERT INTO loja(cnpj, razao, fantasia, telefone, site) VALUES(?, ?, ?, ?, ?)", [insertCnpj, insertRazao, insertFantasia, insertTelefone, insertSite], db.onSuccess, db.onError);
+                    }
+                })
+            }
+
+
+        }
+
+
+
+
+
+
+
+        function Salvar() {
+            var SL = new Loja(document.getElementById('id').value,
+                document.getElementById('cnpj').value,
+                document.getElementById('razao').value,
+                document.getElementById('fantasia').value,
+                document.getElementById('telefone').value,
+                document.getElementById('site').value);
+
+            SL.salvar();
+
+        }
+
+
+
+        window.onload = mostrar;
+        function mostrar() {
+            var table = document.getElementById('tbody-registros');
+
+            db.transaction(function (transaction) {
+                transaction.executeSql('SELECT * FROM loja', [], function (transaction, resultado) {
+                    var rows = resultado.rows;
+                    var tr = '';
+                    for (var i = 0; i < rows.length; i++) {
+                        tr += '<tr>';
+                        tr += '<td onClick="atualizar(' + rows[i].id + ')">' + rows[i].id + '</td>';
+                        tr += '<td>' + rows[i].cnpj + '</td>';
+                        tr += '<td>' + rows[i].razao + '</td>';
+                        tr += '<td>' + rows[i].fantasia + '</td>';
+                        tr += '<td>' + rows[i].telefone + '</td>';
+                        tr += '<td>' + rows[i].site + '</td>';
+                        tr += '<td onClick="atualizar(' + rows[i].id + ')">' + 'editar' + '</td>';
+                        tr += '<td onClick="deletar(' + rows[i].id + ')">' + 'excluir' + '</td>';
+                        tr += '</tr>';
+                    }
+                    table.innerHTML = tr;
+
+                }, null);
+            });
+        }
+
+        function atualizar(_id) {
+
+            let id = document.getElementById('id');
+            let cnpj = document.getElementById('cnpj');
+            let razao = document.getElementById('razao');
+            let fantasia = document.getElementById('fantasia');
+            let telefone = document.getElementById('telefone');
+            let site = document.getElementById('site');
+
+
+            id.value = _id;
+
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM loja WHERE id=?', [_id], function (tx, resultado) {
+                    var rows = resultado.rows[0];
+                    id.value = rows.id;
+                    cnpj.value = rows.cnpj;
+                    razao.value = rows.razao;
+                    fantasia.value = rows.fantasia;
+                    telefone.value = rows.telefone;
+                    site.value = rows.site;
+                });
+            });
+
+
+
+        }
+
+
+        function deletar(_id) {
+
+
+            id.value = _id;
+
+            db.transaction(function (transaction) {
+                transaction.executeSql('DELETE FROM loja WHERE id=?', [_id]);
+            })
+
+            location.reload();
+
+
+        }
+
+
+
+
+    </script>
+</head>
+
+<body>
+        <input type="button" value="Voltar" onClick="history.go(-1)">
+    <h1>Cadastro de Loja</h1>
+
+    <form action="#" method="GET" onsubmit="Salvar()">
+        <input type="hidden" id="id" name="id">
+
+        <label>CNPJ:</label>
+        <input type="number" id="cnpj" maxlength="14" required>
+
+        <br>
+        <br>
+        <label>RAZÃO SOCIAL:</label>
+        <input type="text" id="razao" maxlength="40" required>
+        <br>
+        <br>
+        <label>FANTASIA:</label>
+        <input type="text" id="fantasia" maxlength="40" required>
+        <br>
+        <br>
+        <label>TELEFONE:</label>
+        <input type="number" id="telefone" maxlength="14" required>
+        <br>
+        <br>
+        <label>SITE:</label>
+        <input type="text" id="site" maxlength="20" required>
+        <br>
+        <br>
+        <button type="submit">Salvar</button>
+
+    </form>
+
+    <hr>
+
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>CNPJ</th>
+            <th>RAZÃO SOCIAL</th>
+            <th>FANTASIA</th>
+            <th>TELEFONE</th>
+            <th>SITE</th>
+            <th>AÇÕES</th>
+
+        </thead>
+        <tbody id="tbody-registros">
+
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

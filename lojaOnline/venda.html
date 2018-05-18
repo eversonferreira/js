@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vendas</title>
+    
+</head>
+<script>
+
+    /*********** Scripts Pessoa***************/
+
+// Criando/abrindo o banco
+var db = openDatabase("LojaOnline", "1.0", "base de dados da aplicacao", 200000);
+
+
+
+
+// função callback de erro
+db.onError = function (transaction, e) {
+    alert("Aconteceu um erro: " + e.message);
+    // console.log(e.message);
+}
+
+// função de callback de sucesso de insert
+db.onSuccess = function (transaction, e) {
+    alert("Dados Gravados com Sucesso!");
+    location.reload();
+    //console.log(e);
+}
+
+        window.onload = mostrarVendedor;
+       function mostrarVendedor() {
+         
+         var table = document.getElementById('tbody-registros');
+  
+         db.transaction(function (transaction) {
+             transaction.executeSql('SELECT * FROM vendalivro', [], function (transaction, resultado) {
+                 var rows = resultado.rows;
+                 var tr = '';
+                 for (var i = 0; i < rows.length; i++) {
+                     tr += '<tr>';
+                     tr += '<td onClick="atualizar(' + rows[i].id + ')">' + rows[i].id + '</td>';
+                     tr += '<td>' + rows[i].nome + '</td>';
+                     tr += '<td>' + rows[i].email + '</td>';
+                     tr += '<td>' + rows[i].data + '</td>';
+                     tr += '<td>' + rows[i].quantidade + '</td>';
+                     tr += '<td>' + rows[i].valor + '</td>';
+                     tr += '<td>' + rows[i].valortotal + '</td>';
+                     tr += '</tr>';
+                 }
+                 table.innerHTML = tr;
+  
+             }, null);
+         });
+     }
+</script>
+<body>
+        <input type="button" value="Voltar" onClick="history.go(-1)">
+    <h1>Minhas Vendas</h1>
+
+    
+
+    <hr>
+
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>NOME LIVRO</th>
+            <th>EMAIL CLIENTE</th>
+            <th>DATA</th>
+            <th>QUANTIDADE</th>
+            <th>VALOR</th>
+            <th>TOTAL</th>
+
+        </thead>
+        <tbody id="tbody-registros">
+
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

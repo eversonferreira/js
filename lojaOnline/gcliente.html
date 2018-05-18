@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cadastro de Loja</title>
+   <script src="pessoa.js"></script>
+
+   <script>
+        window.onload = mostrarVendedor;
+       function mostrarVendedor() {
+         
+         var table = document.getElementById('tbody-registros-cliente');
+  
+         db.transaction(function (transaction) {
+             transaction.executeSql('SELECT * FROM cliente', [], function (transaction, resultado) {
+                 var rows = resultado.rows;
+                 var tr = '';
+                 for (var i = 0; i < rows.length; i++) {
+                     tr += '<tr>';
+                     tr += '<td onClick="atualizar(' + rows[i].id + ')">' + rows[i].id + '</td>';
+                     tr += '<td>' + rows[i].nome + '</td>';
+                     tr += '<td>' + rows[i].telefone + '</td>';
+                     tr += '<td>' + rows[i].cpf + '</td>';
+                     tr += '<td>' + rows[i].email + '</td>';
+                     tr += '<td>' + rows[i].senha + '</td>';
+                     tr += '<td onClick="editar(' + rows[i].id + ')">' + 'editar' + '</td>';
+                     tr += '<td onClick="deletar(' + rows[i].id + ')">' + 'excluir' + '</td>';
+                     tr += '</tr>';
+                 }
+                 table.innerHTML = tr;
+  
+             }, null);
+         });
+     }
+
+      function editar(_id) {
+
+let id = document.getElementById('id');
+let nome = document.getElementById('nome');
+let telefone = document.getElementById('telefone');
+let cpf = document.getElementById('cpf');
+let email = document.getElementById('email');
+let senha = document.getElementById('senha');
+
+
+id.value = _id;
+
+db.transaction(function (tx) {
+    tx.executeSql('SELECT * FROM cliente WHERE id=?', [_id], function (tx, resultado) {
+        var rows = resultado.rows[0];
+        id.value = rows.id;
+        nome.value = rows.nome;
+        telefone.value = rows.telefone;
+        cpf.value = rows.cpf;
+        email.value = rows.email;
+        senha.value = rows.senha;
+    });
+});
+
+}
+
+function atualizar(_id) {
+
+let id = document.getElementById('id');
+let nome = document.getElementById('nome');
+let telefone = document.getElementById('telefone');
+let cpf = document.getElementById('cpf');
+let email = document.getElementById('email');
+let senha = document.getElementById('senha');
+
+
+id.value = _id;
+
+db.transaction(function (tx) {
+    tx.executeSql('SELECT * FROM cliente WHERE id=?', [_id], function (tx, resultado) {
+        var rows = resultado.rows[0];
+        id.value = rows.id;
+        nome.value = rows.nome;
+        telefone.value = rows.telefone;
+        cliente.value = rows.cliente;
+        email.value = rows.email;
+        senha.value = rows.senha;
+    });
+});
+}
+
+
+ function deletar(_id) {
+
+
+id.value = _id;
+
+db.transaction(function (transaction) {
+    transaction.executeSql('DELETE FROM cliente WHERE id=?', [_id]);
+})
+
+location.reload();
+
+
+}
+ 
+</script>
+</head>
+
+<body>
+        <input type="button" value="Voltar" onClick="history.go(-1)">
+    <h1>Cadastro de Cliente</h1>
+
+    <form action="#" method="POST" >
+        <input type="hidden" id="id" name="id" >
+
+        <label>NOME:</label>
+        <input type="text" id="nome" maxlength="40" required>
+
+        <br>
+        <br>
+        <label>TELEFONE:</label>
+        <input type="number" id="telefone" maxlength="40" required>
+        <br>
+        <br>
+        <label>CPF</label>
+        <input type="number" id="cpf" maxlength="14" required>
+        <br>
+        <br>
+        <label>EMAIL:</label>
+        <input type="text" id="email"  required>
+        <br>
+        <br>
+        <label>SENHA:</label>
+        <input type="text" id="senha"  required>
+        <br>
+        <br>
+        <button type="button" onclick="SalvarCliente()">Salvar Cliente</button>
+       
+
+    </form>
+
+    <hr>
+
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>NOME</th>
+            <th>TELEFONE</th>
+            <th>CPF</th>
+            <th>EMAIL</th>
+            <th>SENHA</th>
+            <th>AÇOES</th>
+
+        </thead>
+        <tbody id="tbody-registros-cliente">
+
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

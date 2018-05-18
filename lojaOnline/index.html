@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Livraria JS</title>
+    <script src="venda.js"></script>
+
+    <script>
+
+        // Criando/abrindo o banco
+        var db = openDatabase("LojaOnline", "1.0", "base de dados da aplicacao", 200000);
+
+
+        window.onload = mostrar;
+        function mostrar() {
+            var table = document.getElementById('tbody-registros');
+
+            db.transaction(function (transaction) {
+                transaction.executeSql('SELECT * FROM livro', [], function (transaction, resultado) {
+                    var rows = resultado.rows;
+                    var tr = '';
+                    for (var i = 0; i < rows.length; i++) {
+                        tr += '<tr>';
+                        tr += '<td>' + rows[i].nome + '</td>';
+                        tr += '<td>' + rows[i].ano + '</td>';
+                        tr += '<td>' + rows[i].autor + '</td>';
+                        tr += '<td>' + 'R$' + rows[i].valor + '</td>';
+                        tr += '<td>' + rows[i].tipo + '</td>';
+                        tr += '<td>' + (rows[i].quantidade) + '</td>';
+                        tr += '<td onClick="comprar(' + rows[i].id + ')">' + 'Comprar' + '</td>';
+
+                        tr += '</tr>';
+                    }
+                    table.innerHTML = tr;
+
+                }, null);
+            });
+        }
+
+        function comprar(_id) {
+
+            let id = document.getElementById('id');
+            let nome = document.getElementById('nome');
+            let ano = document.getElementById('ano');
+            let autor = document.getElementById('autor');
+            let valor = document.getElementById('valor');
+            let quantidade = document.getElementById('quantidade');
+            let tipo = document.getElementById('tipo');
+
+
+            id.value = _id;
+
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM livro WHERE id=?', [_id], function (tx, resultado) {
+                    var rows = resultado.rows[0];
+                    id.value = rows.id;
+                    nome.value = rows.nome;
+                    ano.value = rows.ano;
+                    autor.value = rows.autor;
+                    valor.value = rows.valor;
+                    quantidade.value = rows.quantidade;
+
+                });
+            });
+
+        }
+     
+
+// Obtém a data/hora atual
+var data = new Date();
+
+// Guarda cada pedaço em uma variável
+var dia     = data.getDate();           // 1-31
+var dia_sem = data.getDay();            // 0-6 (zero=domingo)
+var mes     = data.getMonth();          // 0-11 (zero=janeiro)
+var ano2    = data.getYear();           // 2 dígitos
+var ano4    = data.getFullYear();       // 4 dígitos
+var hora    = data.getHours();          // 0-23
+var min     = data.getMinutes();        // 0-59
+var seg     = data.getSeconds();        // 0-59
+var mseg    = data.getMilliseconds();   // 0-999
+var tz      = data.getTimezoneOffset(); // em minutos
+
+// Formata a data e a hora (note o mês + 1)
+var str_data = dia + '/' + (mes+1) + '/' + ano4;
+var str_hora = hora + ':' + min + ':' + seg;
+
+// Mostra o resultado
+//alert('Hoje é ' + str_data + ' às ' + str_hora);
+
+//document.getElementById("dataAtual").innerHTML = "Paragraph changed!";
+    </script>
+</head>
+
+<body>
+
+
+
+    <a href="#">Login</a>|
+    <a href="cliente.html">Cadastrar</a>|
+    <a href="admin.html">Acesso Admin</a>
+    
+
+    <h1>Livraria JS</h1>
+    <h2>Escolha e pague o livro que mais lhe agrada</h2>
+
+    <table border="1" style="font-size:120%;">
+        <thead>
+            <th>NOME</th>
+            <th>ANO</th>
+            <th>AUTOR</th>
+            <th>VALOR</th>
+            <th>TIPO</th>
+            <th>QUANTIDADE</th>
+            <th>AÇÕES</th>
+
+        </thead>
+        <tbody id="tbody-registros">
+
+        </tbody>
+    </table>
+    <hr>
+    <h2>Após clicar no botão Comprar os dados será transferidos logo a baixo</h2>
+ 
+    <form id="formCompra" action="#" method="POST">
+           
+        <input type="hidden" id="id" name="id">
+
+        <label>NOME:</label>
+        <input type="text" id="nome" maxlength="40" required>
+
+        <br>
+        <br>
+        <label>ANO:</label>
+        <input type="number" id="ano" maxlength="40" required>
+        <br>
+        <br>
+        <label>AUTOR</label>
+        <input type="text" id="autor" maxlength="40" required>
+        <br>
+        <br>
+        <label>VALOR:R$</label>
+        <input type="text" id="valor" required>
+        <br>
+        <br>
+        <label>QUANTIDADE:</label>
+        <input type="number" id="quantidade" required>
+        <br>
+        <br>
+
+        <label>Email Cadastrado:</label>
+        <input type="text" id="email">
+        <label>Senha:</label>
+        <input type="password" id="senha">
+        <button type="button" onclick="FinalizarCompra()">Finalizar Compra</button>
+
+    </form>
+  
+</body>
+
+</html>

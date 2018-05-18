@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+     //Base class
+     class Person {
+        constructor() {
+            this.name = "Person";
+            this.height = 150;
+        }
+
+       
+    }
+
+    //subclass
+    class Developer extends Person {
+        constructor(name, number) {
+            super(); 
+            this.name = name;
+            this.number = number    
+        }
+        sayName() {
+            console.log(this);
+        }
+
+    }
+
+    var Jessy = new Developer ("Deb","99");
+    Jessy.sayName();//"Developer"
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
